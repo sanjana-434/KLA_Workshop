@@ -45,3 +45,4 @@ crop_image = image[x:w, y:h]
 cv2.imwrite("out1.png", crop_image)
 cv2.waitKey(0)
 '''
+print("check")
