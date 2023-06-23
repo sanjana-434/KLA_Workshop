@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 import csv
 
-image_shape = (600,800)  # Example image shape (width, height)
+image_shape = (800,600)  # Example image shape (width, height)
 
 
 def convert_pixels_to_image(pixels, image_shape):
@@ -110,11 +110,12 @@ def checkDefectByGrayscale(gradient_images):
                 value_count[gradient_images[k][i][j]].append(k)
             for k in value_count.keys():
                 if (len(value_count[k]) == 1):
-                    results[value_count[k][0]].append([value_count[k][0]+1,i,gradient_images.shape[2]-j-1])
-    
+                    results[value_count[k][0]].append([value_count[k][0]+1,j,gradient_images.shape[1]-i-1])
+                    print([value_count[k][0]+1,j,gradient_images.shape[1]-i-1])
+
     result = results[0]
     for i in range(1,len(results)):
-        result.extend(results)
+        result.extend(results[i])
     print((result))
     return result
 
@@ -137,7 +138,8 @@ def checkDefectBybinarization(gradient_images):
             #print(value_count)
             for k in [0,1]:
                 if (len(value_count[k]) == 1):
-                    results[value_count[k][0]].append([value_count[k][0]+1,i,gradient_images.shape[2]-j-1])
+                    results[value_count[k][0]].append([value_count[k][0]+1,i,gradient_images.shape[1]-j-1])
+                    print(value_count[k][0]+1,i,j)
     print((results))
     result = result[0]
     for i in range(1,len(results)):
