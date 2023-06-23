@@ -29,6 +29,42 @@ def convert_image_to_pixels(image_path, pixel_length):
 
     return pixels
 
+
+def checkDefectByRGB(image_path):
+    images = []
+    for i in range(0,len(image_path)):
+        images.append(Image.open(image_path[i]))
+
+    image_pixels = []
+    for i in range(0,len(image_path)):
+        image_pixels.append(np.array(images[i]))
+    print(image_pixels[0].shape)
+
+    gradient_images = np.array(image_pixels)
+    gradient_images = gradient_images.reshape((5,600,800,3))
+    print(gradient_images.shape)
+    result = []
+    for i in range(0,gradient_images.shape[1]):
+        for j in range(0,gradient_images.shape[2]):
+            value_count = {}
+            for k in range(0,gradient_images.shape[0]):
+                r = gradient_images[k][i][j][0]
+                b = gradient_images[k][i][j][1]
+                g = gradient_images[k][i][j][2]
+                rgb = str(r)+str(b)+str(g)
+                if (rgb not in value_count):
+                    value_count[rgb] = []
+                value_count[rgb].append(k)
+            for k in value_count.keys():
+                if (len(value_count[k]) == 1):
+                    result.append([value_count[k][0]+1,i,gradient_images.shape[2]-j-1])
+                if (len(value_count[k]) == 2):
+                    result.append([value_count[k][0]+1,i,gradient_images.shape[2]-j-1])
+    print('Number of Defects : ',len(result))
+    return (result)
+
+
+
 def checkDefectByLaplace(images):
     gradient_images = []
     for i in range(0,len(image_path)):
@@ -54,10 +90,12 @@ def checkDefectByLaplace(images):
                 if (len(value_count[k]) == 1):
                     result.append([value_count[k][0],i,j])
     #print('Number of Defects : ',len(result))
-    #print(result)
+    return (result)
 
 def checkDefectByGrayscale(gradient_images):
-    result = []
+    results = []
+    for i in range(0,len(gradient_images)):
+        results.append([])
     print('1 : ',gradient_images[0][0][30])
     print('2 : ',gradient_images[1][0][30])
     print('3 : ',gradient_images[2][0][30])
@@ -71,9 +109,39 @@ def checkDefectByGrayscale(gradient_images):
                     value_count[gradient_images[k][i][j]] = []
                 value_count[gradient_images[k][i][j]].append(k)
             for k in value_count.keys():
-                if (len(value_count[k]) == 1 or len(value_count[k]) == 2):
-                    result.append([value_count[k][0],i,j])
+                if (len(value_count[k]) == 1):
+                    results[value_count[k][0]].append([value_count[k][0]+1,i,gradient_images.shape[2]-j-1])
     
+    result = results[0]
+    for i in range(1,len(results)):
+        result.extend(results)
+    print((result))
+    return result
+
+def checkDefectBybinarization(gradient_images):
+    results = []
+    for i in range(0,len(gradient_images)):
+        results.append([])
+    print('1 : ',gradient_images[0][0][30])
+    print('2 : ',gradient_images[1][0][30])
+    print('3 : ',gradient_images[2][0][30])
+    print('4 : ',gradient_images[3][0][30])
+    print('5 : ',gradient_images[4][0][30])
+    for i in range(0,len(gradient_images)):
+        gradient_images[i] = gradient_images[i] > 128
+    for i in range(0,gradient_images.shape[1]):
+        for j in range(0,gradient_images.shape[2]):
+            value_count = {0:[],1:[]}
+            for k in range(0,gradient_images.shape[0]):
+                value_count[gradient_images[k][i][j]].append(k)
+            #print(value_count)
+            for k in [0,1]:
+                if (len(value_count[k]) == 1):
+                    results[value_count[k][0]].append([value_count[k][0]+1,i,gradient_images.shape[2]-j-1])
+    print((results))
+    result = result[0]
+    for i in range(1,len(results)):
+        result.extend(results)
     return result
 
 
@@ -88,20 +156,21 @@ def convertImage(image_path):
         image_pixels.append(convert_image_to_pixels(image_path[i],1))
     
     gradient_images = image_pixels
-
+    '''
     gradient_images = []
     for i in range(0,len(image_path)):
         gradient_images.append(cv2.Laplacian(images[i], cv2.CV_64F))
     '''
+    
     gradient_images = np.array(gradient_images)
     gradient_images = gradient_images.reshape((5,600,800))
     print(gradient_images.shape)
-    '''
-
+    
 
     return checkDefectByGrayscale(gradient_images)
     #checkDefectByLaplace(images)
-
+    #return checkDefectByRGB(image_path)
+    #return checkDefectBybinarization(gradient_images)
 
 
 
@@ -114,11 +183,11 @@ image5_path = 'wafer_image_5.png'
 image_path = list([image1_path,image2_path,image3_path,image4_path,image5_path])
 
 result = convertImage(image_path)
-print(result)
+#print(result)
 
 filename = "result.csv"
     
 # writing to csv file 
-with open(filename, 'w') as csvfile: 
+with open(filename, 'w',newline='') as csvfile: 
     csvwriter = csv.writer(csvfile)         
     csvwriter.writerows(result)
