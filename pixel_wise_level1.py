@@ -112,7 +112,10 @@ def checkDefectByGrayscale(gradient_images):
                 if (len(value_count[k]) == 1):
                     results[value_count[k][0]].append([value_count[k][0]+1,j,gradient_images.shape[1]-i-1])
                     print([value_count[k][0]+1,j,gradient_images.shape[1]-i-1])
-
+                '''
+                if (len(value_count[k]) == 2):
+                    results[value_count[k][1]].append([value_count[k][1]+1,j,gradient_images.shape[1]-i-1])
+                '''
     result = results[0]
     for i in range(1,len(results)):
         result.extend(results[i])
@@ -176,11 +179,11 @@ def convertImage(image_path):
 
 
 
-image1_path = 'wafer_image_1.png'
-image2_path = 'wafer_image_2.png'
-image3_path = 'wafer_image_3.png'
-image4_path = 'wafer_image_4.png'
-image5_path = 'wafer_image_5.png'
+image1_path = 'wafer_image_1_.png'
+image2_path = 'wafer_image_2_.png'
+image3_path = 'wafer_image_3_.png'
+image4_path = 'wafer_image_4_.png'
+image5_path = 'wafer_image_5_.png'
 
 image_path = list([image1_path,image2_path,image3_path,image4_path,image5_path])
 
