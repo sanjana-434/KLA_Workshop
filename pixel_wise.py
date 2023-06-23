@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from PIL import Image
+import csv
 
 image_shape = (600,800)  # Example image shape (width, height)
 
@@ -52,7 +53,7 @@ def checkDefectByLaplace(images):
             for k in value_count.keys():
                 if (len(value_count[k]) == 1):
                     result.append([value_count[k][0],i,j])
-    print('Number of Defects : ',len(result))
+    #print('Number of Defects : ',len(result))
     #print(result)
 
 def checkDefectByGrayscale(gradient_images):
@@ -70,10 +71,10 @@ def checkDefectByGrayscale(gradient_images):
                     value_count[gradient_images[k][i][j]] = []
                 value_count[gradient_images[k][i][j]].append(k)
             for k in value_count.keys():
-                if (len(value_count[k]) == 1):
+                if (len(value_count[k]) == 1 or len(value_count[k]) == 2):
                     result.append([value_count[k][0],i,j])
-    print('Number of Defects : ',len(result))
-    #print(result)   
+    
+    return result
 
 
 def convertImage(image_path):
@@ -87,19 +88,19 @@ def convertImage(image_path):
         image_pixels.append(convert_image_to_pixels(image_path[i],1))
     
     gradient_images = image_pixels
-    '''
+
     gradient_images = []
     for i in range(0,len(image_path)):
         gradient_images.append(cv2.Laplacian(images[i], cv2.CV_64F))
     '''
-
     gradient_images = np.array(gradient_images)
     gradient_images = gradient_images.reshape((5,600,800))
     print(gradient_images.shape)
+    '''
 
 
-    checkDefectByGrayscale(gradient_images)
-    checkDefectByLaplace(images)
+    return checkDefectByGrayscale(gradient_images)
+    #checkDefectByLaplace(images)
 
 
 
@@ -113,3 +114,11 @@ image5_path = 'wafer_image_5.png'
 image_path = list([image1_path,image2_path,image3_path,image4_path,image5_path])
 
 result = convertImage(image_path)
+print(result)
+
+filename = "result.csv"
+    
+# writing to csv file 
+with open(filename, 'w') as csvfile: 
+    csvwriter = csv.writer(csvfile)         
+    csvwriter.writerows(result)
