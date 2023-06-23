@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 import csv
 
-image_shape = (800,600)  # Example image shape (width, height)
+image_shape = (800,600) 
 
 
 def convert_pixels_to_image(pixels, image_shape):
@@ -74,11 +74,6 @@ def checkDefectByLaplace(images):
     gradient_images = gradient_images.reshape((5,600,800))
     print(gradient_images.shape)
     result = []
-    print('1 : ',gradient_images[0][0][30])
-    print('2 : ',gradient_images[1][0][30])
-    print('3 : ',gradient_images[2][0][30])
-    print('4 : ',gradient_images[3][0][30])
-    print('5 : ',gradient_images[4][0][30])
     for i in range(0,gradient_images.shape[1]):
         for j in range(0,gradient_images.shape[2]):
             value_count = {}
@@ -173,9 +168,6 @@ def convertImage(image_path):
     
 
     return checkDefectByGrayscale(gradient_images)
-    #checkDefectByLaplace(images)
-    #return checkDefectByRGB(image_path)
-    #return checkDefectBybinarization(gradient_images)
 
 
 
