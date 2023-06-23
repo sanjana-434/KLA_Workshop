@@ -36,9 +36,11 @@ def detect_defects(image, reference_image, grayscale_threshold, gradient_thresho
 
     pixels_grayscale_image = (convert_image_to_pixels('wafer_image_1.png',1))
     pixels_grayscale_reference = (convert_image_to_pixels('wafer_image_2.png',1))
-    
+
     pixels_grayscale_reference = np.array(pixels_grayscale_reference)
+    pixels_grayscale_reference = pixels_grayscale_reference.reshape(600,800)
     pixels_grayscale_image = np.array(pixels_grayscale_image)
+    pixels_grayscale_image = pixels_grayscale_image.reshape(600,800)
 
     print(len(pixels_grayscale_image))
     print(len(pixels_grayscale_reference))
